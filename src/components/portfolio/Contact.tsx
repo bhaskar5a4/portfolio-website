@@ -9,8 +9,35 @@ const cards = [
   { icon: Linkedin, label: "LinkedIn", value: "Bhaskar Eedula", href: "https://linkedin.com" },
 ];
 
+const WEB3FORMS_ACCESS_KEY = "358fb602-e04b-402b-8aaa-9c0430b2ad81";
+
 export function Contact() {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("sent");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <section id="contact" className="relative py-28">
@@ -37,7 +64,7 @@ export function Contact() {
           </div>
 
           <form
-            onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+            onSubmit={handleSubmit}
             className="gradient-border space-y-4 rounded-2xl bg-card/60 p-7 backdrop-blur lg:col-span-3"
           >
             <div className="grid gap-4 sm:grid-cols-2">
@@ -47,12 +74,24 @@ export function Contact() {
             <Field label="Subject" name="subject" />
             <div>
               <label className="mb-1.5 block text-xs uppercase tracking-wider text-muted-foreground">Message</label>
-              <textarea required rows={5} className="w-full resize-none rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm outline-none transition-colors focus:border-primary" />
+              <textarea required name="message" rows={5} className="w-full resize-none rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm outline-none transition-colors focus:border-primary" />
             </div>
-            <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:shadow-[0_0_30px_var(--color-primary)]">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:shadow-[0_0_30px_var(--color-primary)] disabled:opacity-60"
+            >
               <Send className="h-4 w-4" />
-              {sent ? "Message Sent" : "Send Message"}
+              {status === "sending" ? "Sending..." :
+               status === "sent" ? "Message Sent ✓" :
+               status === "error" ? "Failed — try again" : "Send Message"}
             </button>
+            {status === "sent" && (
+              <p className="text-sm text-primary">Thanks! Your message has been sent.</p>
+            )}
+            {status === "error" && (
+              <p className="text-sm text-red-400">Something went wrong. Please email me directly.</p>
+            )}
           </form>
         </div>
       </div>
