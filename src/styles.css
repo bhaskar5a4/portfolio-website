@@ -1,0 +1,166 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-neon: var(--neon);
+  --color-neon-soft: var(--neon-soft);
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 0.75rem;
+  /* Premium dark navy + blue accent (orange reserved for CTAs) */
+  --background: oklch(0.16 0.025 265);          /* #0B0F19 */
+  --foreground: oklch(0.98 0.005 250);          /* #F8FAFC */
+  --card: oklch(0.21 0.028 265);                /* #111827 */
+  --card-foreground: oklch(0.98 0.005 250);
+  --popover: oklch(0.21 0.028 265);
+  --popover-foreground: oklch(0.98 0.005 250);
+  --primary: oklch(0.62 0.20 255);              /* #3B82F6 */
+  --primary-foreground: oklch(0.99 0.005 250);
+  --secondary: oklch(0.24 0.028 265);
+  --secondary-foreground: oklch(0.98 0.005 250);
+  --muted: oklch(0.26 0.025 265);
+  --muted-foreground: oklch(0.83 0.018 250);    /* #CBD5E1 */
+  --accent: oklch(0.74 0.17 55);                /* orange — CTA only */
+  --accent-foreground: oklch(0.18 0.03 265);
+  --destructive: oklch(0.65 0.24 25);
+  --destructive-foreground: oklch(0.99 0.005 250);
+  --border: oklch(0.98 0.005 250 / 10%);
+  --input: oklch(0.24 0.028 265);
+  --ring: oklch(0.62 0.20 255);
+  --neon: oklch(0.62 0.20 255);
+  --neon-soft: oklch(0.78 0.14 240);
+
+  --gradient-hero: radial-gradient(ellipse at top, oklch(0.62 0.20 255 / 35%), transparent 70%),
+                   radial-gradient(ellipse at bottom right, oklch(0.55 0.18 240 / 25%), transparent 60%);
+  --gradient-text: linear-gradient(135deg, oklch(0.98 0.005 250), oklch(0.78 0.14 240));
+  --gradient-border: linear-gradient(135deg, oklch(0.62 0.20 255), oklch(0.78 0.14 240));
+  --shadow-glow: 0 0 40px oklch(0.62 0.20 255 / 30%);
+  --shadow-glow-strong: 0 0 80px oklch(0.62 0.20 255 / 50%);
+  --shadow-card: 0 10px 40px oklch(0.05 0.02 265 / 60%);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.45 0.20 255 / 22%), transparent),
+      radial-gradient(ellipse 60% 50% at 100% 50%, oklch(0.40 0.18 240 / 18%), transparent),
+      radial-gradient(ellipse 50% 40% at 0% 80%, oklch(0.40 0.18 250 / 14%), transparent);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .glass {
+    background: oklch(0.2 0.03 260 / 50%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid oklch(1 0 0 / 8%);
+  }
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .glow-strong {
+    box-shadow: var(--shadow-glow-strong);
+  }
+  .gradient-border {
+    position: relative;
+    background: var(--card);
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--gradient-border);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+  }
+  .gradient-border:hover::before { opacity: 1; }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(oklch(0.72 0.18 245 / 8%) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.72 0.18 245 / 8%) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+
+  @keyframes float-up { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .animate-float { animation: float-up 6s ease-in-out infinite; }
+
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 30px oklch(0.72 0.18 245 / 30%); }
+    50% { box-shadow: 0 0 60px oklch(0.72 0.18 245 / 60%); }
+  }
+  .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .animate-marquee { animation: marquee 30s linear infinite; }
+
+  @keyframes blink { 50% { opacity: 0; } }
+  .cursor-blink::after { content: "|"; animation: blink 1s step-end infinite; color: var(--color-neon); margin-left: 2px; }
+
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up 0.7s ease-out both; }
+
+  .card-lift {
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px -10px oklch(0.62 0.20 255 / 35%),
+                0 0 0 1px oklch(0.62 0.20 255 / 35%);
+  }
+}
